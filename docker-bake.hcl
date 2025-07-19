@@ -7,7 +7,7 @@ variable "REGISTRY_USER" {
 }
 
 variable "RELEASE" {
-    default = "1.0.5"
+    default = "1.0.0"
 }
 
 variable "RUNPODCTL_VERSION" {
@@ -22,7 +22,7 @@ group "default" {
 
 target "py310-cu124-torch250" {
     dockerfile = "./dockerfiles/with-xformers-cuxxx/Dockerfile"
-    tags = ["${REGISTRY}/${REGISTRY_USER}/forge_comfyui:${RELEASE}"]
+    tags = ["${REGISTRY}/${REGISTRY_USER}/forge_comfyui_app:${RELEASE}"]
     args = {
         BASE_IMAGE = "nvidia/cuda:12.4.1-cudnn-devel-ubuntu22.04"
         REQUIRED_CUDA_VERSION = "12.4"
