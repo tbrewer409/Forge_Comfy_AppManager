@@ -297,6 +297,13 @@ start_comfyui() {
     deactivate
 }
 
+start_app_manager() {
+    echo "APPM: Starting App Manager..."
+    cd /workspace/appm || return
+    nohup node app.js &> /workspace/logs/appm.log &
+    echo "APPM: App Manager started"
+}
+
 
 
 
@@ -317,6 +324,7 @@ check_python_version
 export_env_vars
 start_forge
 start_comfyui
+start_app_manager
 execute_script "/post_start.sh" "POST-START: Running post-start script..."
 echo "Container is READY!"
 sleep infinity
