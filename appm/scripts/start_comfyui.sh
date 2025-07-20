@@ -1,2 +1,9 @@
 #!/usr/bin/env bash
-cd /workspace/ComfyUI && source venv/bin/activate && python3 main.py --listen 0.0.0.0 --port 3021 > /workspace/logs/comfyui.log 2>&1 &
+# Launch ComfyUI with the same arguments used on container start
+cd /workspace/comfyui || exit 1
+source venv/bin/activate
+nohup python main.py --listen 0.0.0.0 --port 7860 \
+    --extra-model-paths-config /workspace/comfyui/extra_model_paths.yaml \
+    --highvram --cuda-malloc > /workspace/logs/comfyui.log 2>&1 &
+deactivate
+
