@@ -43,6 +43,10 @@ WORKDIR /
 COPY --chmod=755 ../../scripts/* ./
 RUN mv /manage_venv.sh /usr/local/bin/manage_venv
 
+# Copy the app manager
+COPY ../../appm /workspace/appm
+
+
 # Start the container
 ARG REQUIRED_CUDA_VERSION
 ENV REQUIRED_CUDA_VERSION=${REQUIRED_CUDA_VERSION}
