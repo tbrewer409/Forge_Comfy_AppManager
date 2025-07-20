@@ -299,14 +299,24 @@ start_comfyui() {
 
 start_app_manager() {
     echo "APPM: Starting App Manager..."
-    cd /workspace/appm || return
+    APPM_DIR="/workspace/appm"
+
+    if [ ! -d "$APPM_DIR" ]; then
+        echo "APPM: Cloning from GitHub..."
+        git clone https://github.com/tbrewer409/appm.git "$APPM_DIR"
+    fi
+
+    cd "$APPM_DIR" || return
+
     if [ ! -d node_modules ]; then
         echo "APPM: Installing dependencies..."
         npm install --production
     fi
+
     nohup node app.js &> /workspace/logs/appm.log &
     echo "APPM: App Manager started"
 }
+
 
 
 

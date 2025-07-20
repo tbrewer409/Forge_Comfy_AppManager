@@ -3,11 +3,11 @@ variable "REGISTRY" {
 }
 
 variable "REGISTRY_USER" {
-    default = "tbrewer937"
+    default = "tbrewer409"
 }
 
 variable "RELEASE" {
-    default = "1.0.1"
+    default = "1.1.5"
 }
 
 variable "RUNPODCTL_VERSION" {
