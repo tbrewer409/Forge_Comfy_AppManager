@@ -300,6 +300,10 @@ start_comfyui() {
 start_app_manager() {
     echo "APPM: Starting App Manager..."
     cd /workspace/appm || return
+    if [ ! -d node_modules ]; then
+        echo "APPM: Installing dependencies..."
+        npm install --production
+    fi
     nohup node app.js &> /workspace/logs/appm.log &
     echo "APPM: App Manager started"
 }

@@ -38,6 +38,11 @@ RUN rm -f /etc/ssh/ssh_host_*
 # NGINX Proxy
 COPY ../../nginx/502.html /usr/share/nginx/html/502.html
 
+# Copy the app manager and install dependencies
+COPY ../../appm /workspace/appm
+WORKDIR /workspace/appm
+RUN chmod +x scripts/*.sh && npm install --production
+
 # Copy the scripts
 WORKDIR /
 COPY --chmod=755 ../../scripts/* ./
