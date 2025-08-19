@@ -46,6 +46,8 @@ apt install -y --no-install-recommends \
     sysstat \
     pigz \
     lz4 \
+    libcudnn8-dev \
+    libcudnn8 \
     zstd \
     cpio \
     jq \

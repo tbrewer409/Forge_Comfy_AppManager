@@ -25,7 +25,6 @@ python3 -m ipykernel install --name "python3" --display-name "Python 3"
 curl -sSL https://github.com/kodxana/RunPod-FilleUploader/raw/main/scripts/installer.sh -o installer.sh && \
     chmod +x installer.sh && \
     ./installer.sh
-
 # Install rclone
 curl https://rclone.org/install.sh | bash
 
@@ -36,7 +35,6 @@ rclone selfupdate
 wget "https://github.com/runpod/runpodctl/releases/download/${RUNPODCTL_VERSION}/runpodctl-linux-amd64" -O runpodctl && \
     chmod a+x runpodctl && \
     mv runpodctl /usr/local/bin
-
 # Install croc
 curl https://getcroc.schollz.com | bash
 

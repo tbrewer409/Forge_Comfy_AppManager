@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
+
+# ---------------------------------------------------------------------------- #
+#                     Default + Environment Override Args                      #
+# ---------------------------------------------------------------------------- #
+: "${DEFAULT_F_ARGS:=--listen --port 3000 --enable-insecure-extension-access}"
+: "${DEFAULT_C_ARGS:=--listen 0.0.0.0 --port 7860 --extra-model-paths-config /workspace/comfyui/extra_model_paths.yaml}"
+
+: "${F_ARGS:=}"
+: "${C_ARGS:=}"
+
+FINAL_FORGE_ARGS="$DEFAULT_F_ARGS $F_ARGS"
+FINAL_COMFY_ARGS="$DEFAULT_C_ARGS $C_ARGS"
+
+
 # ---------------------------------------------------------------------------- #
 #                          Function Definitions                                #
 # ---------------------------------------------------------------------------- #
@@ -161,7 +175,6 @@ start_runpod_uploader() {
     nohup /usr/local/bin/runpod-uploader &> /workspace/logs/runpod-uploader.log &
     echo "RUNPOD-UPLOADER: RunPod Uploader started"
 }
-
 update_rclone() {
     echo "RCLONE: Updating rclone..."
     rclone selfupdate
@@ -229,7 +242,8 @@ start_forge() {
 
     echo "Launching Forge WebUI..."
     source "${FORGE_DIR}/venv/bin/activate"
-    nohup python launch.py --listen --port 3000 --api --enable-insecure-extension-access --cuda-malloc --opt-sdp-attention &> /workspace/logs/forge.log &
+    nohup python launch.py $FINAL_FORGE_ARGS &> /workspace/logs/forge.log &
+    echo "Forge WebUI launched with args: $FINAL_FORGE_ARGS"
     deactivate
 }
 
@@ -258,32 +272,26 @@ start_comfyui() {
         mkdir -p "$CUSTOM_NODES_DIR"
 
         # Clone extensions (no parsing, just straight-up Forge-style)
+        git clone https://github.com/kijai/ComfyUI-KJNodes.git "$CUSTOM_NODES_DIR/ComfyUI-KJNodes"
         git clone https://github.com/ltdrdata/ComfyUI-Manager.git "$CUSTOM_NODES_DIR/ComfyUI-Manager"
         git clone https://github.com/rgthree/rgthree-comfy.git "$CUSTOM_NODES_DIR/rgthree-comfy"
-        git clone https://github.com/ltdrdata/ComfyUI-Impact-Pack.git "$CUSTOM_NODES_DIR/ComfyUI-Impact-Pack"
         git clone https://github.com/Fannovel16/comfyui_controlnet_aux.git "$CUSTOM_NODES_DIR/comfyui_controlnet_aux"
         git clone https://github.com/yolain/ComfyUI-Easy-Use.git "$CUSTOM_NODES_DIR/ComfyUI-Easy-Use"
-        git clone https://github.com/kijai/ComfyUI-Florence2.git "$CUSTOM_NODES_DIR/ComfyUI-Florence2"
-        git clone https://github.com/WASasquatch/was-node-suite-comfyui.git "$CUSTOM_NODES_DIR/was-node-suite-comfyui"
-        git clone https://github.com/cubiq/ComfyUI_essentials.git "$CUSTOM_NODES_DIR/ComfyUI_essentials"
-        git clone https://github.com/Jonseed/ComfyUI-Detail-Daemon.git "$CUSTOM_NODES_DIR/ComfyUI-Detail-Daemon"
         git clone https://codeberg.org/Gourieff/comfyui-reactor-node.git "$CUSTOM_NODES_DIR/comfyui-reactor-node"
         git clone https://github.com/JPS-GER/ComfyUI_JPS-Nodes.git "$CUSTOM_NODES_DIR/ComfyUI_JPS-Nodes"
         git clone https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes.git "$CUSTOM_NODES_DIR/ComfyUI_Comfyroll_CustomNodes"
         git clone https://github.com/theUpsider/ComfyUI-Logic.git "$CUSTOM_NODES_DIR/ComfyUI-Logic"
+        git clone https://github.com/pythongosssss/ComfyUI-Custom-Scripts.git "$CUSTOM_NODES_DIR/ComfyUI-Custom-Scripts"
+        git clone https://github.com/prodogape/ComfyUI-clip-interrogator.git "$CUSTOM_NODES_DIR/ComfyUI-clip-interrogator"
 
         # Install all extension requirements in one pip call
         echo "Installing all ComfyUI extension requirements in one pip call..."
         pip install \
+            -r "$CUSTOM_NODES_DIR/ComfyUI-KJNodes/requirements.txt" \
             -r "$CUSTOM_NODES_DIR/ComfyUI-Manager/requirements.txt" \
             -r "$CUSTOM_NODES_DIR/rgthree-comfy/requirements.txt" \
-            -r "$CUSTOM_NODES_DIR/ComfyUI-Impact-Pack/requirements.txt" \
             -r "$CUSTOM_NODES_DIR/comfyui_controlnet_aux/requirements.txt" \
             -r "$CUSTOM_NODES_DIR/ComfyUI-Easy-Use/requirements.txt" \
-            -r "$CUSTOM_NODES_DIR/ComfyUI-Florence2/requirements.txt" \
-            -r "$CUSTOM_NODES_DIR/was-node-suite-comfyui/requirements.txt" \
-            -r "$CUSTOM_NODES_DIR/ComfyUI_essentials/requirements.txt" \
-            -r "$CUSTOM_NODES_DIR/ComfyUI-Detail-Daemon/requirements.txt" \
             -r "$CUSTOM_NODES_DIR/comfyui-reactor-node/requirements.txt"
 
         deactivate
@@ -291,9 +299,8 @@ start_comfyui() {
 
     echo "Launching ComfyUI..."
     source "$COMFY_DIR/venv/bin/activate"
-    nohup python main.py --listen 0.0.0.0 --port 7860 \
-        --extra-model-paths-config /workspace/comfyui/extra_model_paths.yaml \
-        --highvram --cuda-malloc &> /workspace/logs/comfyui.log &
+    nohup python main.py $FINAL_COMFY_ARGS &> /workspace/logs/comfyui.log &
+    echo "ComfyUI launched with args: $FINAL_COMFY_ARGS"
     deactivate
 }
 
